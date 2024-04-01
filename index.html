@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Table Shot</title>
+    <style>
+        h1 {
+            font-size: 50px;
+            text-align: center;
+            font-family: system-ui, -apple-system;
+            color: rgb(0, 0, 0);
+            font-stretch: expanded;
+        }
+
+        h2 {
+            text-align: center;
+            font-family: system-ui, -apple-system;
+            color: rgb(0, 0, 0);
+            font-stretch: expanded;
+        }
+
+        h4 {
+            text-align: center;
+            font-family: system-ui, -apple-system;
+            color: rgb(0, 0, 0);
+            font-stretch: expanded;
+        }
+
+        svg {
+            /* Adjust height and width as needed */
+            height: 580px;
+            width: 295px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+
+        body {
+            background-color: rgb(140, 179, 138);
+        }
+
+
+        .line {
+            stroke: black;
+            stroke-width: 20;
+            pointer-events: none; /* To ensure the line doesn't interfere with mouse events */
+        }
+
+        .cueContainer {
+            position: relative;
+            width: 1000px;
+            height: 1000px;
+            background-color: #f0f0f0;
+            margin: 50px auto;
+        }
+
+        #inputName {
+
+            display:flex;
+            align-items: center;
+            width: 600px;
+            text-align: center;
+            margin-left: 700px;
+            margin-bottom: 40px;
+        }
+
+        #nameButton{
+            margin-left: 20px;
+            margin-right: 50px;
+        }
+
+        #player1 {
+            margin-right: 70px;
+
+        }
+
+        #inputName h4 {
+            margin-right: 10px; /* Adjust margin as needed */
+        }
+
+
+    </style>
+</head>
+<body>
+
+<h1 class="title">Billiards</h1>
+
+<h2 id = "playersIn"> Enter the player names </h2>
+
+<div id="inputName" style="text-align: center;">
+    <h4 id="P1" style="display: inline-block; margin-right: 10px;"> P1 </h4>
+    <input type="text" id="player1" placeholder="Enter player 1 name here" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+    <h4 id="P2" style="display: inline-block; margin-right: 10px;"> P2</h4>
+    <input type="text" id="player2" placeholder="Enter player 2 name here" style="padding: 8px; margin-right: 10px; border-radius: 5px; border: 1px solid #ccc;">
+    <button id="nameButton" onclick="enterNames()" style="padding: 8px 20px; background-color: #505a50; color: white; border: none; border-radius: 5px; cursor: pointer;">Enter</button>
+</div>
+
+
+<div class="container" id="svg-container" >
+    <!-- Use object tag to display the SVG file -->
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+    <svg width="700" height="1375" viewBox="-25 -25 1400 2750"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" /> <rect width="1400" height="25" x="-25" y="-25" fill="darkgreen" />
+        <rect width="1400" height="25" x="-25" y="2700" fill="darkgreen" />
+        <rect width="25" height="2750" x="-25" y="-25" fill="darkgreen" />
+        <rect width="25" height="2750" x="1350" y="-25" fill="darkgreen" />
+        <circle cx="0.0" cy="0.0" r="114.0" fill="black" />
+        <circle cx="0.0" cy="1350.0" r="114.0" fill="black" />
+        <circle cx="0.0" cy="2700.0" r="114.0" fill="black" />
+        <circle cx="1350.0" cy="0.0" r="114.0" fill="black" />
+        <circle cx="1350.0" cy="1350.0" r="114.0" fill="black" />
+        <circle cx="1350.0" cy="2700.0" r="114.0" fill="black" />
+        <circle id="cueball" cx="675.0" cy="2025.0" r="28.5" fill="WHITE" />
+        <circle cx="675.0" cy="675.0" r="28.5" fill="#FFD600" />
+        <circle cx="615.0" cy="630.0" r="28.5" fill="#273746" />
+        <circle cx="735.0" cy="630.0" r="28.5" fill="#FF0000" />
+        <circle cx="555.0" cy="585.0" r="28.5" fill="#800080" />
+        <circle cx="675.0" cy="585.0" r="28.5" fill="#FFA500" />
+        <circle cx="795.0" cy="585.0" r="28.5" fill="#008000" />
+        <circle cx="495.0" cy="540.0" r="28.5" fill="#8B4513" />
+        <circle cx="615.0" cy="540.0" r="28.5" fill="#000000" />
+        <circle cx="735.0" cy="540.0" r="28.5" fill="#FFFF00" />
+        <circle cx="855.0" cy="540.0" r="28.5" fill="#ADD8E6" />
+    </svg>
+    </object>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the cueball element from the SVG
+        var cueball = document.querySelector('circle[fill="WHITE"]');
+        var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute('id', 'line');
+        line.setAttribute('stroke', 'black');
+        line.setAttribute('stroke-width', '10');
+        cueball.parentNode.appendChild(line);
+
+        // Define constants for scaling
+        var scale = 4; // Adjust as needed
+
+        // Variables to track mouse coordinates and dragging state
+        var isDragging = false;
+        var initX, initY; // Define initX and initY outside of the event listeners
+
+        // Variables to store initial position for velocity calculation
+        var initialCueballX, initialCueballY;
+
+        // Function to handle mousedown event on the cueball
+        function onMouseDown(event) {
+            isDragging = true;
+
+            initX = event.clientX; // Assign value to initX
+            initY = event.clientY; // Assign value to initY
+
+            initialCueballX = cueball.cx.baseVal.value;
+            initialCueballY = cueball.cy.baseVal.value;
+
+            // Show the line
+            line.style.display = 'block';
+
+            // Set line starting point to cueball position
+            line.setAttribute('x1', cueball.cx.baseVal.value);
+            line.setAttribute('y1', cueball.cy.baseVal.value);
+
+            // Set line ending point to cueball position initially
+            line.setAttribute('x2', cueball.cx.baseVal.value);
+            line.setAttribute('y2', cueball.cy.baseVal.value);
+        }
+
+        // Function to handle mousemove event
+        function onMouseMove(event) {
+            if (isDragging) {
+                var adjustedX = (event.clientX - initX) * scale + parseFloat(cueball.getAttribute('cx'));
+                var adjustedY = (event.clientY - initY) * scale + parseFloat(cueball.getAttribute('cy'));
+                // Update the line position to end at the adjusted mouse position
+                line.setAttribute('x2', adjustedX);
+                line.setAttribute('y2', adjustedY);
+            }
+        }
+
+        // Function to handle mouseup event
+        function onMouseUp(event) {
+            if (isDragging) {
+                isDragging = false;
+
+                var adjustedX = (event.clientX - initX) * scale + parseFloat(cueball.getAttribute('cx'));
+                var adjustedY = (event.clientY - initY) * scale + parseFloat(cueball.getAttribute('cy'));
+
+                var finalX = (adjustedX - parseFloat(cueball.getAttribute('cx')));
+                var finalY = (adjustedY - parseFloat(cueball.getAttribute('cy')));
+
+                // Hide the line when dragging stops
+                line.style.display = 'none';
+
+                // Calculate velocity
+                var velocityX = -(finalX * scale);
+                var velocityY = -(finalY * scale);
+
+                console.log("Velocity X:", velocityX);
+                console.log("Velocity Y:", velocityY);
+
+                // Send finalX and finalY to the server
+                sendVelocity(velocityX, velocityY);
+            }
+        }
+
+        // Add mousedown event listener to the cueball
+        cueball.addEventListener('mousedown', onMouseDown);
+
+        // Add mousemove event listener to the document
+        document.addEventListener('mousemove', onMouseMove);
+
+        // Add mouseup event listener to the document
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    var parser = new DOMParser();
+
+    function handleStateChange(){
+        if(this.readyState === 4 && this.status === 200){
+            var responseData = JSON.parse(this.responseText);
+            var delay = 10;
+            var index = 0;
+
+            function replaceSVGWithAnimation(){
+                if (index < responseData.length){
+                    var newSVGElement = createSVGElement(responseData[index]);
+                    if(index === responseData.length - 1)
+                        {onMouseDown(newSVGElement);}
+                    appendSVGElement(newSVGElement);
+                    index++;
+
+                    setTimeout(replaceSVGWithAnimation, delay);
+                }
+            }
+            replaceSVGWithAnimation();
+        }
+    }
+
+    function createSVGElement(svgText) {
+        var svgDocument = parser.parseFromString(svgText, "image/svg+xml");
+        var svgElement = svgDocument.documentElement;
+        return svgElement;
+    }
+
+    function appendSVGElement(svgElement) {
+        var svgContainer = document.getElementById('svg-container');
+        // Remove all existing SVG elements from the container
+        while (svgContainer.firstChild) {
+            svgContainer.removeChild(svgContainer.firstChild);
+        }
+        // Append the new SVG element to the container
+        svgContainer.appendChild(svgElement);
+    }
+
+    function enterNames() {
+        // Get the text input elements by their IDs
+        var player1Input = document.getElementById('player1');
+        var player2Input = document.getElementById('player2');
+
+        // Get the values entered by the user
+        var player1Name = player1Input.value;
+        var player2Name = player2Input.value;
+
+        sendNames(player1Name,player2Name)
+    }
+
+    function sendNames(p1, p2) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/handle_names", true); // Open the request
+        xhr.setRequestHeader("Content-Type", "application/json"); // Set request header
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log("Names sent successfully!");
+                    // Remove input and button elements
+                    document.getElementById("player1").remove();
+                    document.getElementById("P1").remove();
+                    document.getElementById("player2").remove();
+                    document.getElementById("P2").remove();
+                    document.getElementById("nameButton").remove();
+                    document.getElementById("playersIn").remove();
+                } 
+                else {
+                    console.error("Error sending names:", xhr.statusText);
+                }
+            }
+        };
+        var data = JSON.stringify({ "player1": p1, "player2": p2 }); // Create JSON data
+        xhr.send(data); // Send the data
+    }
+
+    function sendVelocity(vx,vy) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/handle_mouse_position", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        var data = JSON.stringify({ "vx": vx, "vy": vy });
+        xhr.onreadystatechange = handleStateChange;
+        
+        xhr.send(data);
+    }
+
+</script>
+
+</body>
+</html>
