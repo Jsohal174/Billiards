@@ -24,7 +24,7 @@ FRAME_RATE = 0.01;
 HEADER = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="700" height="1375" viewBox="-25 -25 1400 2750"
+<svg id="mySVG" width="700" height="1375" viewBox="-25 -25 1400 2750"
 xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink">
 <rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" />""";
@@ -586,7 +586,7 @@ class Database():
                 return result
             
             else:
-                raise ValueError(f"No data found for gameID: {gameID}")
+                raise ValueError(f"No data found for gameID: {GameID}")
 
         except sqlite3.Error as e:
             print(f"Error retrieving data: {e}")
@@ -681,7 +681,7 @@ class Database():
 
         self.conn.commit()
 
-    def updatePlayerNames(self, newP1, newP2):
+    def updatePlayerNames(self, newP1, newP2, gameName):
         
         """
         This method updates the player names in the database.
@@ -701,6 +701,12 @@ class Database():
                 WHERE PLAYERNAME = ?;
             ''', (newP2, 'defaultName2'))
 
+            self.cursor.execute('''
+                UPDATE Game 
+                SET GAMENAME = ?
+                WHERE GAMENAME = ?;
+            ''', (gameName, 'Game 01'))
+
             # Commit the changes
             print("names updated")
             self.conn.commit()
@@ -710,13 +716,9 @@ class Database():
             raise
 
     def getLastTableID(self):
-
-        """
-        This method return latest table Id
-        """
-        self.cursor.execute("SELECT MAX(TABLEID) FROM TTable")
-        last_table_id = self.cursor.fetchone()[0]
-        self.conn.commit()
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT MAX(TABLEID) FROM TTable")
+        last_table_id = cursor.fetchone()[0]
         return last_table_id
 
 
@@ -822,11 +824,12 @@ class Game():
 
                 # Inserted the shot into the database
                 self.db.insertShot(newTableID, shotID)
-
-        print("Done\n")
+                
         return shotID
 
-    def update(self, newP1, newP2):
+    def update(self, newP1, newP2, gameName):
+
+        print("calling update palyers")
         # calls the updatePlayers which updates the player names in database
-        self.db.updatePlayerNames(newP1,newP2)
+        self.db.updatePlayerNames(newP1,newP2, gameName)
 

@@ -1,8 +1,8 @@
 CC := clang
 CFLAGS := -Wall -pedantic -std=c99 -fPIC
-PYTHON_INCLUDE := /usr/include/python3.11/
+PYTHON_INCLUDE := /Library/Frameworks/Python.framework/Versions/3.11/include/python3.11
 LIBS := -lm
-PYTHON_LIB := /usr/lib/python3.11
+PYTHON_LIB := /Library/Frameworks/Python.framework/Versions/3.11/lib
 SWIG := swig
 
 
